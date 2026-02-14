@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
 
-const API_URL = 'http://localhost:8000';
+const API_URL = 'https://code-collab-backend-myk9.onrender.com';
 
 function Home() {
     const navigate = useNavigate();

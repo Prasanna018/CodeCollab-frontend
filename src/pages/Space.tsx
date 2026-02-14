@@ -4,8 +4,8 @@ import Editor from '@monaco-editor/react';
 import { useWebSocket } from '../hooks/useWebSocket';
 import './Space.css';
 
-const API_URL = 'http://localhost:8000';
-const WS_URL = 'ws://localhost:8000';
+const API_URL = 'https://code-collab-backend-myk9.onrender.com';
+const WS_URL = 'wss://code-collab-backend-myk9.onrender.com';
 
 const LANGUAGES = [
     { value: 'python', label: 'Python' },
