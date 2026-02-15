@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
 
@@ -9,6 +9,16 @@ function Home() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            setMousePosition({ x: e.clientX, y: e.clientY });
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, []);
 
     const createNewSpace = async () => {
         setLoading(true);
@@ -35,13 +45,27 @@ function Home() {
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred');
             console.error('Error creating space:', err);
+
+            // Auto-hide error after 5 seconds
+            setTimeout(() => setError(null), 5000);
         } finally {
             setLoading(false);
         }
     };
 
+    const handleKeyPress = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' && !loading) {
+            createNewSpace();
+        }
+    };
+
     return (
-        <div className="home-container">
+        <div
+            className="home-container"
+            style={{
+                background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(255,255,255,0.1) 0%, transparent 50%)`
+            }}
+        >
             <div className="home-content">
                 <div className="hero-section">
                     <h1 className="title">
@@ -54,70 +78,83 @@ function Home() {
                     </p>
                     <p className="description">
                         Share 2000+ lines of code instantly with teammates.<br />
-                        No login required. Just create, share, and collaborate.
+                        No login required. Just create, share, and collaborate in real-time.
                     </p>
                 </div>
 
-                <button
-                    className="create-button"
-                    onClick={createNewSpace}
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <>
-                            <span className="spinner"></span>
-                            Creating Space...
-                        </>
-                    ) : (
-                        <>
-                            <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M10 4V16M4 10H16"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                />
-                            </svg>
-                            Create New Space
-                        </>
-                    )}
-                </button>
+                <div className="cta-section">
+                    <button
+                        className="create-button"
+                        onClick={createNewSpace}
+                        onKeyPress={handleKeyPress}
+                        disabled={loading}
+                        aria-label="Create new collaboration space"
+                    >
+                        {loading ? (
+                            <>
+                                <span className="spinner" role="status" aria-label="loading"></span>
+                                Creating Space...
+                            </>
+                        ) : (
+                            <>
+                                <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M12 4V20M4 12H20"
+                                        stroke="currentColor"
+                                        strokeWidth="2.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
+                                Create New Space
+                            </>
+                        )}
+                    </button>
 
-                {error && <div className="error-message">{error}</div>}
+                    {error && (
+                        <div className="error-message" role="alert">
+                            <span>⚠️</span> {error}
+                        </div>
+                    )}
+                </div>
 
                 <div className="features">
-                    <div className="feature">
-                        <div className="feature-icon">⚡</div>
+                    <div className="feature" tabIndex={0} role="article">
+                        <div className="feature-icon" aria-hidden="true">⚡</div>
                         <div className="feature-text">
                             <h3>Instant Sync</h3>
-                            <p>Changes appear in real-time</p>
+                            <p>Changes appear in real-time across all connected users</p>
                         </div>
                     </div>
-                    <div className="feature">
-                        <div className="feature-icon">🔗</div>
+
+                    <div className="feature" tabIndex={0} role="article">
+                        <div className="feature-icon" aria-hidden="true">🔗</div>
                         <div className="feature-text">
                             <h3>Easy Sharing</h3>
-                            <p>Just share the link</p>
+                            <p>Just share the unique link - no accounts or passwords needed</p>
                         </div>
                     </div>
-                    <div className="feature">
-                        <div className="feature-icon">🎨</div>
+
+                    <div className="feature" tabIndex={0} role="article">
+                        <div className="feature-icon" aria-hidden="true">🎨</div>
                         <div className="feature-text">
                             <h3>Syntax Highlighting</h3>
-                            <p>Supports all major languages</p>
+                            <p>Supports all major programming languages with smart formatting</p>
                         </div>
                     </div>
-                    <div className="feature">
-                        <div className="feature-icon">⏰</div>
+
+                    <div className="feature" tabIndex={0} role="article">
+                        <div className="feature-icon" aria-hidden="true">⏰</div>
                         <div className="feature-text">
                             <h3>Auto-Expire</h3>
-                            <p>Spaces delete after 24 hours</p>
+                            <p>Spaces automatically delete after 24 hours for privacy</p>
                         </div>
                     </div>
                 </div>
