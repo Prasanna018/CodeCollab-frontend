@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
-import { getApiBase } from '../config';
 
-const API_BASE = getApiBase();
+
+const API_BASE = 'https://code-collab-backend-myk9.onrender.com';
 
 function Home() {
     const navigate = useNavigate();

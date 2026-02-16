@@ -2,11 +2,11 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Editor from '@monaco-editor/react';
 import { useWebSocket } from '../hooks/useWebSocket';
-import { getApiBase, getWsBase } from '../config';
+
 import './Space.css';
 
-const API_BASE = getApiBase();
-const WS_BASE = getWsBase();
+const API_BASE = 'https://code-collab-backend-myk9.onrender.com';
+const WS_BASE = 'wss://code-collab-backend-myk9.onrender.com';
 
 const LANGUAGES = [
     { value: 'python', label: 'Python' },
