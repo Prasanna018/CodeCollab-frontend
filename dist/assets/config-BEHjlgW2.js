@@ -1,0 +1,1 @@
+const o={};function r(){const t=(o||{}).VITE_API_URL;return t&&t.trim().length>0?t.replace(/\/+$/,""):""}function s(){const t=(o||{}).VITE_WS_URL;return t&&t.trim().length>0?t.replace(/\/+$/,""):`${window.location.protocol==="https:"?"wss:":"ws:"}//${window.location.host}`}export{s as a,r as g};

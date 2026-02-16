@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
+import { getApiBase } from '../config';
 
-const API_URL = 'https://code-collab-backend-myk9.onrender.com';
-// const API_URL = 'https://code-collab-backend-rho.vercel.app'
+const API_BASE = getApiBase();
 
 function Home() {
     const navigate = useNavigate();
@@ -25,7 +25,7 @@ function Home() {
         setError(null);
 
         try {
-            const response = await fetch(`${API_URL}/api/spaces`, {
+            const response = await fetch(`${API_BASE}/api/spaces`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

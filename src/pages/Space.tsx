@@ -1,13 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Editor from '@monaco-editor/react';
 import { useWebSocket } from '../hooks/useWebSocket';
+import { getApiBase, getWsBase } from '../config';
 import './Space.css';
 
-const API_URL = 'https://code-collab-backend-myk9.onrender.com';
-const WS_URL = 'wss://code-collab-backend-myk9.onrender.com';
-// const API_URL = 'https://code-collab-backend-rho.vercel.app'
-// const WS_URL = 'wss://code-collab-backend-rho.vercel.app'
+const API_BASE = getApiBase();
+const WS_BASE = getWsBase();
 
 const LANGUAGES = [
     { value: 'python', label: 'Python' },
@@ -45,7 +44,7 @@ function Space() {
     useEffect(() => {
         const fetchSpace = async () => {
             try {
-                const response = await fetch(`${API_URL}/api/spaces/${spaceId}`);
+                const response = await fetch(`${API_BASE}/api/spaces/${spaceId}`);
                 if (!response.ok) {
                     throw new Error('Space not found');
                 }
@@ -99,22 +98,27 @@ function Space() {
     }, [userId]);
 
     const { sendMessage, isConnected } = useWebSocket(
-        `${WS_URL}/ws/${spaceId}`,
+        `${WS_BASE}/ws/${spaceId}`,
         handleWebSocketMessage,
         !loading && !error
     );
 
-    // Handle code changes
+    const debounceRef = useRef<number | null>(null);
     const handleCodeChange = useCallback(
         (value: string | undefined) => {
-            if (isUpdatingFromWS) return; // Don't send updates if we're receiving one
+            if (isUpdatingFromWS) return;
 
             const newCode = value || '';
             setCode(newCode);
-            sendMessage({
-                type: 'code_change',
-                code: newCode,
-            });
+            if (debounceRef.current) {
+                clearTimeout(debounceRef.current);
+            }
+            debounceRef.current = window.setTimeout(() => {
+                sendMessage({
+                    type: 'code_change',
+                    code: newCode,
+                });
+            }, 200);
         },
         [sendMessage, isUpdatingFromWS]
     );
